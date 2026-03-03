@@ -2,8 +2,7 @@ import { useState, useCallback } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { C, F } from '@styles/tokens'
 import { DEFAULT_PATH } from '@routes/index'
-import Navbar        from '@components/Navbar'
-import LoadingScreen from '@components/LoadingScreen'
+import Navbar        from '@components/layout/header/Navbar'
 import HeroHeader    from '@components/HeroHeader'
 
 import BeamPage       from '@pages/BeamPage'
@@ -24,7 +23,6 @@ export default function App() {
 
   return (
     <>
-      {!loaded && <LoadingScreen onComplete={() => setLoaded(true)} />}
 
       <div style={{
         background: C.bg,

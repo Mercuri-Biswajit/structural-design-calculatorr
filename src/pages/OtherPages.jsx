@@ -1010,7 +1010,7 @@ export function ReportPage({ allData }) {
             letterSpacing: "4px",
           }}
         >
-          STRUX
+          STRUCTURE DESIGN REPORT
         </div>
         <div
           style={{

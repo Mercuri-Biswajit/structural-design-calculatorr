@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
-import logo from "../assets/icons/My__Logo.png";
-import "../styles/navbar.css";
+import logo from "../../../assets/icons/My__Logo.png";
+
+import "./navbar.css";
 
 export default function Navbar() {
   return (
@@ -10,7 +11,7 @@ export default function Navbar() {
         {/* Logo */}
         <NavLink to="/" className="navbar-logo-link">
           <div className="navbar-logo-mark">
-            <img src={logo} alt="STRUX Logo" />
+            <img src={logo} alt="Structure Design Logo" />
           </div>
         </NavLink>
 
@@ -25,9 +26,9 @@ export default function Navbar() {
             }
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <rect x="1"  y="5" width="12" height="4"  rx="1.5" fill="white" opacity="0.9" />
-              <rect x="1"  y="1" width="3"  height="12" rx="1"   fill="white" opacity="0.4" />
-              <rect x="10" y="1" width="3"  height="12" rx="1"   fill="white" opacity="0.4" />
+              <rect x="1"  y="5" width="12" height="4"  rx="1.5" fill="currentColor" opacity="0.9" />
+              <rect x="1"  y="1" width="3"  height="12" rx="1"   fill="currentColor" opacity="0.4" />
+              <rect x="10" y="1" width="3"  height="12" rx="1"   fill="currentColor" opacity="0.4" />
             </svg>
             Structure
           </NavLink>
