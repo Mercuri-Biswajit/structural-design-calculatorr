@@ -205,7 +205,7 @@ function ModuleSummaryCard({ moduleId, snapshot }) {
   return (
     <div
       style={{
-        background: "#fff",
+        background: C.bgCard,
         border: `1px solid ${C.border}`,
         borderTop: `3px solid ${color}`,
         borderRadius: 10,
@@ -376,7 +376,7 @@ function ProjectCard({ project, onDelete }) {
   return (
     <div
       style={{
-        background: "#fff",
+        background: C.bgCard,
         border: `1px solid ${C.border}`,
         borderRadius: 14,
         overflow: "hidden",
@@ -843,7 +843,7 @@ export default function DashboardPage() {
           <div
             key={label}
             style={{
-              background: "#fff",
+              background: C.bgCard,
               border: `1px solid ${C.border}`,
               borderRadius: 12,
               padding: "16px 18px",

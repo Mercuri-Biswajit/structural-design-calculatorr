@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { C, F } from "@styles/tokens";
 import { DEFAULT_PATH } from "@routes/index";
 import Navbar from "@components/layout/header/Navbar";
 import HeroHeader from "@components/HeroHeader";
@@ -14,7 +13,6 @@ import { BridgePage, BOQPage, ReportPage } from "@pages/OtherPages";
 import DashboardPage from "@pages/DashboardPage";
 
 export default function App() {
-  const [loaded, setLoaded] = useState(true);
   const [allData, setAllData] = useState({});
 
   const onDataChange = useCallback((pageId, data) => {
@@ -23,20 +21,21 @@ export default function App() {
 
   return (
     <>
+      {/* Sidebar */}
+      <Navbar />
+
+      {/* Main content area */}
       <div
         style={{
-          background: C.bg,
-          minHeight: "100vh",
-          fontFamily: F.sans,
-          opacity: loaded ? 1 : 0,
-          transition: "opacity 0.4s ease 0.1s",
+          marginLeft: 'var(--sidebar-width)',
+          minHeight: '100vh',
+          transition: 'margin-left 0.25s ease',
         }}
       >
-        <Navbar />
-        <HeroHeader />
+        <main style={{ maxWidth: '100%', margin: '0 10px' }}>
+          <div style={{ padding: '24px 32px 72px', width: '100%', maxWidth: '1600px', margin: '0 auto' }}>
+            <HeroHeader />
 
-        <main style={{ maxWidth: 1400, margin: "0 auto" }}>
-          <div style={{ padding: "24px 24px 72px" }}>
             <Routes>
               <Route
                 path="/"

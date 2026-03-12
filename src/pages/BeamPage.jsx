@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { C, F, badge } from "@styles/tokens";
+import './BeamPage.css';
 import {
   Card,
   TwoCol,
@@ -39,10 +40,10 @@ function BeamSchematic({ span, loads, support }) {
         y={bY - 5}
         width={pw}
         height={10}
-        fill="#dde6f5"
-        stroke={C.blue}
+        fill="#e0eafc"
+        stroke={C.primary}
         strokeWidth={2}
-        rx={2}
+        rx={3}
       />
       {support === "simply" && (
         <>
@@ -203,8 +204,8 @@ function SectionPreview({ b, d, material }) {
     sh = Math.min(d * scale, 80);
   const ox = (70 - sw) / 2,
     oy = (85 - sh) / 2;
-  const fill = material === "concrete" ? "#dde4ef" : "#e8ddd0";
-  const stroke = material === "concrete" ? C.blue : C.orange;
+  const fill = material === "concrete" ? "#e0eafc" : "#fde8d0";
+  const stroke = material === "concrete" ? C.primary : C.accent;
   return (
     <svg width={70} height={85} style={{ display: "block", margin: "0 auto" }}>
       <rect

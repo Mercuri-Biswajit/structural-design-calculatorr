@@ -1,0 +1,46 @@
+/* ── STAT BOX ──────────────────────────────────────────────── */
+.stat-box {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+  min-width: 0;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.stat-box:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.stat-box__label {
+  font-size: 8.5px;
+  color: var(--ink-light);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  margin-bottom: 3px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-box__value {
+  font-size: 16px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-box__unit {
+  font-size: 8.5px;
+  color: var(--ink-light);
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}

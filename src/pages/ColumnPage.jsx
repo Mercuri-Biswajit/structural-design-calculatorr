@@ -11,7 +11,7 @@ function ColumnSketch({ b, d, material, P, Mx, My, Le }) {
       <div style={{ textAlign: 'center' }}>
         <p style={{ fontSize: 10, color: C.inkLight, fontFamily: F.mono, marginBottom: 6, letterSpacing: '1px', textTransform: 'uppercase' }}>Elevation</p>
         <svg width={140} height={230}>
-          <rect x={50} y={30} width={50} height={170} fill={material === 'concrete' ? '#dde4ef' : '#e8ddd0'} stroke={C.blue} strokeWidth={2} rx={2} />
+          <rect x={50} y={30} width={50} height={170} fill={material === 'concrete' ? '#e0eafc' : '#fde8d0'} stroke={C.blue} strokeWidth={2} rx={3} />
           {material === 'concrete' && [[57,38],[93,38],[57,192],[93,192]].map(([cx,cy],i) =>
             <circle key={i} cx={cx} cy={cy} r={5} fill={C.orange} />
           )}
@@ -34,7 +34,7 @@ function ColumnSketch({ b, d, material, P, Mx, My, Le }) {
       <div style={{ textAlign: 'center' }}>
         <p style={{ fontSize: 10, color: C.inkLight, fontFamily: F.mono, marginBottom: 6, letterSpacing: '1px', textTransform: 'uppercase' }}>Plan View</p>
         <svg width={120} height={120}>
-          <rect x={10} y={10} width={100} height={100} fill={material === 'concrete' ? '#dde4ef' : '#e8ddd0'} stroke={C.blue} strokeWidth={2} rx={2} />
+          <rect x={10} y={10} width={100} height={100} fill={material === 'concrete' ? '#e0eafc' : '#fde8d0'} stroke={C.blue} strokeWidth={2} rx={3} />
           {material === 'concrete' && [[18,18],[102,18],[18,102],[102,102]].map(([cx,cy],i) =>
             <circle key={i} cx={cx} cy={cy} r={6} fill={C.orange} />
           )}

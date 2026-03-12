@@ -25,13 +25,13 @@ export function DiagramCanvas({ x, values, span, color, label, unit }) {
     const ty   = v => pad.t + ph / 2 - (v / maxV) * (ph / 2 - 5)
 
     // ── Soft background ──
-    ctx.fillStyle = '#f7f8f6'
+    ctx.fillStyle = '#f4f7fb'
     ctx.beginPath()
     ctx.roundRect(pad.l - 4, pad.t - 4, pw + 8, ph + 8, 4)
     ctx.fill()
 
     // ── Grid lines ──
-    ctx.strokeStyle = '#e4e8e2'
+    ctx.strokeStyle = '#e0e8f0'
     ctx.lineWidth   = 1
     for (let i = 0; i <= 4; i++) {
       const gy = pad.t + (i / 4) * ph
@@ -43,7 +43,7 @@ export function DiagramCanvas({ x, values, span, color, label, unit }) {
     }
 
     // ── Zero line ──
-    ctx.strokeStyle = '#b8c4b9'
+    ctx.strokeStyle = '#b8c8d8'
     ctx.lineWidth   = 1
     ctx.setLineDash([4, 4])
     ctx.beginPath(); ctx.moveTo(pad.l, ty(0)); ctx.lineTo(W - pad.r, ty(0)); ctx.stroke()

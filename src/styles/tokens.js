@@ -1,104 +1,111 @@
-// ── COLOR PALETTE — Light theme, Navy · Orange · Green for elements ─
+// ── PREMIUM LIGHT PALETTE ─────────────────────────────────────
 export const C = {
-  // Surfaces — clean white/light
-  bg:       '#f5f7fa',
+  // Surfaces — crisp whites with blue undertones
+  bg:       '#f0f4f8',
   bgCard:   '#ffffff',
-  bgAlt:    '#f0f3f8',
-  bgInput:  '#f8fafc',
-  bgHover:  '#eef2f8',
+  bgAlt:    '#e8eef6',
+  bgInput:  '#f4f7fb',
+  bgHover:  '#eaf0f8',
+  bgDark:   '#0f172a',
 
-  // Borders
-  border:      '#d0dae8',
-  borderMid:   '#b8c8d8',
+  // Glassmorphism
+  glassBg:     'rgba(255,255,255,0.65)',
+  glassBorder: 'rgba(255,255,255,0.45)',
+  glassBlur:   'blur(18px)',
 
-  // Ink
-  ink:      '#0d1e35',
-  inkMid:   '#2c4160',
-  inkLight: '#6b85a0',
-  inkFaint: '#a8bfd0',
+  // Borders — subtle blue tint
+  border:    '#d4dce8',
+  borderMid: '#bcc8d8',
+  borderFocus:'#2563eb',
 
-  // Navy — primary brand color
-  navy:        '#0f2d5c',
-  navyMid:     '#1a4080',
-  navyLight:   '#e8f0f9',
-  navyGlow:    'rgba(15,45,92,0.12)',
-  navyBright:  '#2563b0',
+  // Ink — refined hierarchy
+  ink:       '#0f172a',
+  inkMid:    '#334155',
+  inkLight:  '#64748b',
+  inkFaint:  '#94a3b8',
 
-  // Orange — secondary accent
-  orange:      '#e8630a',
-  orangeMid:   '#c85508',
-  orangeLight: '#fff3eb',
-  orangeGlow:  'rgba(232,99,10,0.15)',
-  orangeBright:'#ff7a2a',
+  // Primary — electric blue
+  primary:       '#2563eb',
+  primaryDark:   '#1d4ed8',
+  primaryLight:  '#eff6ff',
+  primaryGlow:   'rgba(37,99,235,0.12)',
+  primaryBright: '#3b82f6',
 
-  // Green — tertiary accent / success
-  green:      '#16a34a',
-  greenDim:   '#15803d',
-  greenLight: '#f0fdf4',
-  greenMid:   '#dcfce7',
-  greenGlow:  'rgba(22,163,74,0.12)',
+  // Accent — vivid orange
+  accent:       '#ea580c',
+  accentDark:   '#c2410c',
+  accentLight:  '#fff7ed',
+  accentGlow:   'rgba(234,88,12,0.12)',
+  accentBright: '#f97316',
 
-  // Supporting semantic colors
-  blue:        '#2563eb',
-  blueLight:   '#eff6ff',
-  red:         '#dc2626',
-  redLight:    '#fef2f2',
-  yellow:      '#ca8a04',
-  yellowLight: '#fefce8',
-  purple:      '#7c3aed',
-  purpleLight: '#f5f3ff',
-  teal:        '#0891b2',
-  tealLight:   '#ecfeff',
+  // Success — emerald
+  success:      '#059669',
+  successDark:  '#047857',
+  successLight: '#ecfdf5',
+  successMid:   '#d1fae5',
+  successGlow:  'rgba(5,150,105,0.12)',
 
-  // Elevation
-  shadowXs: '0 1px 3px rgba(15,45,92,0.08)',
-  shadow:   '0 2px 8px rgba(15,45,92,0.10)',
-  shadowMd: '0 4px 20px rgba(15,45,92,0.13)',
-  shadowLg: '0 8px 40px rgba(15,45,92,0.16)',
+  // Semantic
+  blue:         '#2563eb',
+  blueLight:    '#eff6ff',
+  red:          '#dc2626',
+  redLight:     '#fef2f2',
+  yellow:       '#d97706',
+  yellowLight:  '#fffbeb',
+  purple:       '#7c3aed',
+  purpleLight:  '#f5f3ff',
+  teal:         '#0891b2',
+  tealLight:    '#ecfeff',
+  green:        '#059669',
+  greenLight:   '#ecfdf5',
+  greenMid:     '#d1fae5',
+  greenGlow:    'rgba(5,150,105,0.12)',
+  orange:       '#ea580c',
+  orangeLight:  '#fff7ed',
+  orangeGlow:   'rgba(234,88,12,0.12)',
+
+  // Legacy aliases (backward compat)
+  navy:        '#0f172a',
+  navyMid:     '#1e3a5f',
+  navyLight:   '#eff6ff',
+  navyGlow:    'rgba(15,45,92,0.10)',
+  navyBright:  '#2563eb',
+
+  // Elevation — colored tint shadows
+  shadowXs: '0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06)',
+  shadow:   '0 1px 3px rgba(15,23,42,0.06), 0 4px 12px rgba(15,23,42,0.06)',
+  shadowMd: '0 4px 6px rgba(15,23,42,0.04), 0 10px 24px rgba(15,23,42,0.08)',
+  shadowLg: '0 8px 16px rgba(15,23,42,0.06), 0 20px 48px rgba(15,23,42,0.10)',
+  shadowGlow: (color) => `0 0 20px ${color}20, 0 4px 12px ${color}15`,
 }
 
 // ── TYPOGRAPHY ─────────────────────────────────────────────────
 export const F = {
-  sans: "'Plus Jakarta Sans', sans-serif",
-  mono: "'DM Mono', monospace",
-  display: "'Plus Jakarta Sans', sans-serif",
+  sans:    "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
+  mono:    "'DM Mono', 'Fira Code', monospace",
+  display: "'Plus Jakarta Sans', system-ui, sans-serif",
 }
 
-// ── REUSABLE STYLE OBJECTS ─────────────────────────────────────
-export const inputBase = {
-  background:  C.bgInput,
-  border:      `1.5px solid ${C.border}`,
-  borderRadius: 7,
-  color:       C.ink,
-  padding:     '8px 11px',
-  fontFamily:  F.mono,
-  fontSize:    12.5,
-  width:       '100%',
-  outline:     'none',
-  transition:  'border-color 0.16s, box-shadow 0.16s',
+// ── SPACING ────────────────────────────────────────────────────
+export const S = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
 }
 
-export const sectionTitle = {
-  margin:        '0 0 12px',
-  fontSize:      10,
-  color:         C.inkLight,
-  textTransform: 'uppercase',
-  letterSpacing: '2px',
-  fontFamily:    F.sans,
-  fontWeight:    700,
+// ── RADIUS ─────────────────────────────────────────────────────
+export const R = {
+  sm: 6,
+  md: 10,
+  lg: 14,
+  xl: 18,
+  full: 9999,
 }
 
-export const labelStyle = {
-  display:       'block',
-  fontSize:      10,
-  color:         C.inkLight,
-  marginBottom:  4,
-  fontFamily:    F.sans,
-  fontWeight:    600,
-  letterSpacing: '0.5px',
-  textTransform: 'uppercase',
-}
-
+// ── REUSABLE STYLE PRESETS ─────────────────────────────────────
 export const badge = (color, bg) => ({
   display:       'inline-flex',
   alignItems:    'center',
@@ -107,7 +114,7 @@ export const badge = (color, bg) => ({
   fontFamily:    F.mono,
   fontSize:      11,
   padding:       '2px 8px',
-  borderRadius:  4,
+  borderRadius:  R.sm,
   fontWeight:    600,
   letterSpacing: '0.5px',
 })

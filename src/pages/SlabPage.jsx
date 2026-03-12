@@ -34,7 +34,7 @@ function SlabPlan({ Lx, Ly, isTwoWay, r }) {
         y={oy}
         width={sw}
         height={sh}
-        fill="#e8f5ef"
+        fill="#ecfdf5"
         stroke={C.green}
         strokeWidth={2}
       />
@@ -146,7 +146,7 @@ function SlabSection({ thickness, wDL, wLL, dEff }) {
         y={28}
         width={240}
         height={45}
-        fill="#dde4ef"
+        fill="#e0eafc"
         stroke={C.blue}
         strokeWidth={2}
       />
