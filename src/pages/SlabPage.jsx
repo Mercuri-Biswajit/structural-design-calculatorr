@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { C, F } from "@styles/tokens";
 import {
   Card,
   TwoCol,
   StatGrid,
   StatBox,
-  UtilBar,
-  PassFail,
+  TabBtn,
   Inp,
   SectionTitle,
   InfoBox,
   ResultRow,
   Divider,
+  PassFail,
+  UtilBar,
 } from "@components/ui";
 import { analyzeSlab } from "@engines/structuralEngine";
 import { SavePanel, SaveToast } from "@components/SavePanel";
@@ -19,161 +21,165 @@ import { useSaveToProject } from "../hooks/useSaveToProject";
 
 function SlabPlan({ Lx, Ly, isTwoWay, r }) {
   const sc = Math.min(220 / Math.max(Lx, 1), 150 / Math.max(Ly, 1));
-  const sw = Lx * sc,
-    sh = Ly * sc;
+  const sw = Math.max(Lx * sc, 10),
+    sh = Math.max(Ly * sc, 10);
   const ox = (280 - sw) / 2,
     oy = (170 - sh) / 2;
   return (
-    <svg
+    <motion.svg
       width={280}
       height={190}
-      style={{ display: "block", margin: "0 auto" }}
+      style={{ display: "block", margin: "0 auto", overflow: 'visible' }}
     >
-      <rect
+      <motion.rect
+        layout
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         x={ox}
         y={oy}
         width={sw}
         height={sh}
-        fill="#ecfdf5"
+        fill="url(#concrete)"
         stroke={C.green}
-        strokeWidth={2}
+        strokeWidth={2.5}
+        rx={6}
+        filter="url(#shadow)"
       />
-      {Array.from({ length: 6 }, (_, i) => (
-        <line
-          key={`h${i}`}
-          x1={ox + 2}
-          y1={oy + ((i + 1) * sh) / 7}
-          x2={ox + sw - 2}
-          y2={oy + ((i + 1) * sh) / 7}
-          stroke={C.orange}
-          strokeWidth={0.8}
-          opacity={0.6}
-          strokeDasharray="3,2"
-        />
-      ))}
-      {isTwoWay &&
-        Array.from({ length: 6 }, (_, i) => (
-          <line
-            key={`v${i}`}
-            x1={ox + ((i + 1) * sw) / 7}
-            y1={oy + 2}
-            x2={ox + ((i + 1) * sw) / 7}
-            y2={oy + sh - 2}
+      
+      {/* Horizontal reinforcement lines */}
+      <AnimatePresence>
+        {Array.from({ length: 7 }, (_, i) => (
+          <motion.line
+            key={`h${i}`}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            x1={ox + 4}
+            y1={oy + ((i + 1) * sh) / 8}
+            x2={ox + sw - 4}
+            y2={oy + ((i + 1) * sh) / 8}
             stroke={C.green}
-            strokeWidth={0.8}
-            opacity={0.6}
-            strokeDasharray="3,2"
+            strokeWidth={1.5}
+            opacity={0.3}
+            strokeDasharray="4,4"
           />
         ))}
-      <text
-        x={ox + sw / 2}
-        y={oy - 8}
-        textAnchor="middle"
-        fill={C.inkMid}
-        fontSize={11}
-        fontFamily={F.mono}
+      </AnimatePresence>
+
+      {/* Vertical reinforcement lines for two-way */}
+      <AnimatePresence>
+        {isTwoWay &&
+          Array.from({ length: 7 }, (_, i) => (
+            <motion.line
+              key={`v${i}`}
+              initial={{ scaleY: 0 }}
+              animate={{ scaleY: 1 }}
+              x1={ox + ((i + 1) * sw) / 8}
+              y1={oy + 4}
+              x2={ox + ((i + 1) * sw) / 8}
+              y2={oy + sh - 4}
+              stroke={C.green}
+              strokeWidth={1.5}
+              opacity={0.3}
+              strokeDasharray="4,4"
+            />
+          ))}
+      </AnimatePresence>
+
+      <motion.g layout>
+        <text
+          x={ox + sw / 2} y={oy - 12}
+          textAnchor="middle" fill={C.inkMid} fontSize={11} fontWeight={700} fontFamily={F.mono}
+        >
+          Lx = {Lx} m
+        </text>
+        <text
+          x={ox - 18} y={oy + sh / 2}
+          textAnchor="middle" fill={C.inkMid} fontSize={11} fontWeight={700} fontFamily={F.mono}
+          transform={`rotate(-90, ${ox - 18}, ${oy + sh / 2})`}
+        >
+          Ly = {Ly} m
+        </text>
+      </motion.g>
+
+      <motion.g 
+        initial={{ y: 5, opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        key={isTwoWay ? 'two' : 'one'}
       >
-        Lx = {Lx} m
-      </text>
-      <text
-        x={ox - 14}
-        y={oy + sh / 2}
-        textAnchor="middle"
-        fill={C.inkMid}
-        fontSize={11}
-        fontFamily={F.mono}
-        transform={`rotate(-90, ${ox - 14}, ${oy + sh / 2})`}
-      >
-        Ly = {Ly} m
-      </text>
-      <text
-        x={ox + sw / 2}
-        y={oy + sh / 2 + 5}
-        textAnchor="middle"
-        fill={C.green}
-        fontSize={12}
-        fontFamily={F.mono}
-        fontWeight="700"
-      >
-        {isTwoWay ? "TWO-WAY" : "ONE-WAY"}
-      </text>
-      <text
-        x={ox + sw / 2}
-        y={oy + sh / 2 + 20}
-        textAnchor="middle"
-        fill={C.inkLight}
-        fontSize={9}
-        fontFamily={F.mono}
-      >
-        Ly/Lx = {r}
-      </text>
-    </svg>
+        <text
+          x={ox + sw / 2} y={oy + sh / 2 + 5}
+          textAnchor="middle" fill={C.green} fontSize={14} fontFamily={F.mono} fontWeight="900"
+          filter="url(#glow)"
+        >
+          {isTwoWay ? "TWO-WAY" : "ONE-WAY"}
+        </text>
+        <text
+          x={ox + sw / 2} y={oy + sh / 2 + 22}
+          textAnchor="middle" fill={C.inkMid} fontSize={10} fontWeight={600} fontFamily={F.mono}
+        >
+          Ratio = {r}
+        </text>
+      </motion.g>
+    </motion.svg>
   );
 }
 
 function SlabSection({ thickness, wDL, wLL, dEff }) {
   return (
-    <svg
+    <motion.svg
       width={280}
       height={110}
-      style={{ display: "block", margin: "0 auto" }}
+      style={{ display: "block", margin: "0 auto", overflow: 'visible' }}
     >
-      {[50, 90, 130, 170, 210].map((ax) => (
-        <g key={ax}>
-          <line
-            x1={ax}
-            y1={5}
-            x2={ax}
-            y2={25}
-            stroke={C.red}
-            strokeWidth={1.5}
-          />
-          <polygon points={`${ax},25 ${ax - 4},15 ${ax + 4},15`} fill={C.red} />
-        </g>
+      {/* Load Arrows */}
+      {[50, 95, 140, 185, 230].map((ax, i) => (
+        <motion.g 
+          key={ax}
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: i * 0.1 }}
+        >
+          <line x1={ax} y1={5} x2={ax} y2={22} stroke={C.red} strokeWidth={2.5} strokeLinecap="round" />
+          <polygon points={`${ax},22 ${ax - 4.5},12 ${ax + 4.5},12`} fill={C.red} />
+        </motion.g>
       ))}
-      <text
-        x={140}
-        y={4}
-        textAnchor="middle"
-        fill={C.red}
-        fontSize={9}
-        fontFamily={F.mono}
-      >
+      <text x={140} y={4} textAnchor="middle" fill={C.red} fontSize={10} fontWeight={800} fontFamily={F.mono}>
         w = {wDL + wLL} kN/m²
       </text>
-      <rect
-        x={20}
-        y={28}
-        width={240}
-        height={45}
-        fill="#e0eafc"
-        stroke={C.blue}
-        strokeWidth={2}
+
+      {/* Slab Cross Section */}
+      <motion.rect
+        layout
+        x={20} y={24} width={240} height={48}
+        fill="url(#concrete)" stroke={C.blue} strokeWidth={2.5}
+        rx={2}
+        filter="url(#shadow)"
       />
-      {[40, 80, 120, 160, 200, 240].map((rx) => (
-        <circle key={rx} cx={rx} cy={63} r={4} fill={C.orange} />
-      ))}
-      <text
-        x={140}
-        y={87}
-        textAnchor="middle"
-        fill={C.inkMid}
-        fontSize={9}
-        fontFamily={F.mono}
-      >
-        Thickness = {thickness} mm
-      </text>
-      <text
-        x={140}
-        y={99}
-        textAnchor="middle"
-        fill={C.inkLight}
-        fontSize={8}
-        fontFamily={F.mono}
-      >
-        d_eff = {dEff} mm
-      </text>
-    </svg>
+
+      {/* Main Reinforcement (Dots) */}
+      <AnimatePresence>
+        {[40, 80, 120, 160, 200, 240].map((rx, i) => (
+          <motion.circle 
+            key={rx} 
+            initial={{ scale: 0 }} 
+            animate={{ scale: 1 }} 
+            transition={{ delay: 0.5 + i * 0.05 }}
+            cx={rx} cy={60} r={4.5} 
+            fill={C.orange} 
+            filter="url(#glow)"
+          />
+        ))}
+      </AnimatePresence>
+
+      <motion.g layout>
+        <text x={140} y={88} textAnchor="middle" fill={C.inkMid} fontSize={10} fontWeight={700} fontFamily={F.mono}>
+          Thickness = {thickness} mm
+        </text>
+        <text x={140} y={102} textAnchor="middle" fill={C.inkLight} fontSize={9} fontWeight={600} fontFamily={F.mono}>
+          d_eff = {dEff} mm
+        </text>
+      </motion.g>
+    </motion.svg>
   );
 }
 

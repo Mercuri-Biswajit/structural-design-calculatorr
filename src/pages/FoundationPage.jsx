@@ -1,42 +1,103 @@
-import { useState, useEffect } from 'react'
-import { C, F } from '@styles/tokens'
-import { Card, TwoCol, StatGrid, StatBox, UtilBar, PassFail, Inp, SectionTitle, InfoBox, ResultRow, Divider } from '@components/ui'
-import { analyzeFoundation } from '../engines/structuralEngine'
-import { SavePanel, SaveToast } from '@components/SavePanel'
-import { useSaveToProject } from '../hooks/useSaveToProject'
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { C, F } from "@styles/tokens";
+import {
+  Card,
+  TwoCol,
+  StatGrid,
+  StatBox,
+  TabBtn,
+  Inp,
+  SectionTitle,
+  InfoBox,
+  ResultRow,
+  Divider,
+  PassFail,
+  UtilBar,
+} from "@components/ui";
+import { analyzeFoundation } from "@engines/structuralEngine";
+import { SavePanel, SaveToast } from "@components/SavePanel";
+import { useSaveToProject } from "../hooks/useSaveToProject";
 
 function FoundationSketch({ B, L, D, type }) {
   const sc  = Math.min(200 / Math.max(B, 1), 120 / Math.max(L, 1))
-  const fw  = B * sc, fh = L * sc
+  const fw  = Math.max(B * sc, 10), fh = Math.max(L * sc, 10)
   const ox  = (260 - fw) / 2, oy = (150 - fh) / 2
   const col = type === 'isolated' ? 40 : fw
+
   return (
-    <svg width={260} height={190} style={{ display:'block', margin:'0 auto' }}>
-      {/* Soil hatch */}
-      {Array.from({length:8},(_,i)=>(
-        <line key={i} x1={ox+i*fw/7} y1={oy+fh} x2={ox+i*fw/7-18} y2={oy+fh+20}
-          stroke={C.inkFaint} strokeWidth={0.8}/>
-      ))}
-      <line x1={ox-10} y1={oy+fh} x2={ox+fw+10} y2={oy+fh} stroke={C.inkFaint} strokeWidth={1}/>
-      {/* Foundation body */}
-      <rect x={ox} y={oy} width={fw} height={fh} fill="#dde4ef" stroke={C.blue} strokeWidth={2} rx={2}/>
-      {/* Column stub */}
-      <rect x={ox+(fw-col)/2} y={oy-30} width={col} height={36}
-        fill={C.blueLight} stroke={C.blue} strokeWidth={1.5}/>
-      {/* Rebar dots */}
-      {[ox+8, ox+fw/2, ox+fw-8].map((rx,i)=>(
-        <circle key={i} cx={rx} cy={oy+fh-8} r={4} fill={C.orange}/>
-      ))}
-      {/* Load arrow */}
-      <line x1={ox+fw/2} y1={oy-55} x2={ox+fw/2} y2={oy-32} stroke={C.red} strokeWidth={2.5}/>
-      <polygon points={`${ox+fw/2},${oy-30} ${ox+fw/2-5},${oy-42} ${ox+fw/2+5},${oy-42}`} fill={C.red}/>
-      <text x={ox+fw/2+8} y={oy-44} fill={C.red} fontSize={9} fontFamily={F.mono}>P</text>
+    <motion.svg width={260} height={190} style={{ display:'block', margin:'0 auto', overflow: 'visible' }}>
+      {/* Soil / Excavation background */}
+      <motion.rect 
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        x={0} y={oy+fh} width={260} height={40} fill="url(#soil)" 
+      />
+      
+      {/* Soil hatch lines */}
+      <AnimatePresence>
+        {Array.from({length:8},(_,i)=>(
+          <motion.line 
+            key={i} 
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+            x1={ox+i*fw/7} y1={oy+fh} x2={ox+i*fw/7-18} y2={oy+fh+20}
+            stroke={C.inkMid} strokeWidth={1} opacity={0.3}
+          />
+        ))}
+      </AnimatePresence>
+      <line x1={ox-20} y1={oy+fh} x2={ox+fw+20} y2={oy+fh} stroke={C.inkMid} strokeWidth={1.5} />
+
+      {/* Main Footing Body */}
+      <motion.rect 
+        layout
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        x={ox} y={oy} width={fw} height={fh} 
+        fill="url(#concrete)" stroke={C.borderMid} strokeWidth={2.5} 
+        rx={4}
+        filter="url(#shadow)"
+      />
+
+      {/* Column Stub */}
+      <motion.rect 
+        layout
+        initial={{ y: 10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        x={ox+(fw-col)/2} y={oy-30} width={col} height={36}
+        fill="url(#concrete)" stroke={C.blue} strokeWidth={2} 
+        rx={2}
+        filter="url(#shadow)"
+      />
+
+      {/* Rebar visualization (bottom mesh) */}
+      <AnimatePresence>
+        {[ox+10, ox+fw/2, ox+fw-10].map((rx,i)=>(
+          <motion.circle 
+            key={i} 
+            initial={{ scale: 0 }} animate={{ scale: 1 }}
+            transition={{ delay: 0.4 + i*0.1 }}
+            cx={rx} cy={oy+fh-8} r={4.5} 
+            fill={C.ink} 
+            opacity={0.6}
+            filter="url(#glow)"
+          />
+        ))}
+      </AnimatePresence>
+
+      {/* Load Arrow */}
+      <motion.g animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
+        <line x1={ox+fw/2} y1={oy-55} x2={ox+fw/2} y2={oy-32} stroke={C.red} strokeWidth={3} strokeLinecap="round" />
+        <polygon points={`${ox+fw/2},${oy-30} ${ox+fw/2-6},${oy-42} ${ox+fw/2+6},${oy-42}`} fill={C.red} />
+        <text x={ox+fw/2+10} y={oy-46} fill={C.red} fontSize={10} fontWeight={800} fontFamily={F.mono}>P_axial</text>
+      </motion.g>
+
       {/* Labels */}
-      <text x={ox+fw/2} y={oy+fh+32} textAnchor="middle" fill={C.inkMid} fontSize={9} fontFamily={F.mono}>B={B}m</text>
-      <text x={ox-22} y={oy+fh/2} textAnchor="middle" fill={C.inkMid} fontSize={9} fontFamily={F.mono}
-        transform={`rotate(-90,${ox-22},${oy+fh/2})`}>L={L}m</text>
-      <text x={ox+fw+18} y={oy+fh/2+5} textAnchor="middle" fill={C.inkLight} fontSize={8} fontFamily={F.mono}>D={D}m</text>
-    </svg>
+      <motion.g layout>
+        <text x={ox+fw/2} y={oy+fh+34} textAnchor="middle" fill={C.inkMid} fontSize={10} fontWeight={700} fontFamily={F.mono}>Width B = {B}m</text>
+        <text x={ox-26} y={oy+fh/2} textAnchor="middle" fill={C.inkMid} fontSize={10} fontWeight={700} fontFamily={F.mono}
+          transform={`rotate(-90,${ox-26},${oy+fh/2})`}>Length L = {L}m</text>
+        <text x={ox+fw+24} y={oy+fh/2+5} textAnchor="middle" fill={C.inkLight} fontSize={9} fontWeight={600} fontFamily={F.mono}>Depth D = {D}m</text>
+      </motion.g>
+    </motion.svg>
   )
 }
 

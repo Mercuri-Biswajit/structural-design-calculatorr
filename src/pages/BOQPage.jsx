@@ -79,24 +79,24 @@ export default function BOQPage({ onDataChange }) {
           {/* BOQ Table */}
           <Card>
             <SectionTitle>Bill of Quantities</SectionTitle>
-            <div style={{border:`1px solid ${C.border}`,borderRadius:8,overflow:'hidden'}}>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 60px 80px 70px 90px',background:C.bgAlt,borderBottom:`1px solid ${C.border}`,padding:'8px 12px',gap:6}}>
+            <div style={{border:`1px solid ${C.border}`, borderRadius:12, overflow:'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.03)'}}>
+              <div style={{display:'grid', gridTemplateColumns:'1fr 60px 80px 70px 100px', background:C.bgAlt, borderBottom:`1px solid ${C.border}`, padding:'12px 16px', gap:12}}>
                 {['Description','Unit','Qty','Rate (₹)','Amount (₹)'].map(h=>(
-                  <div key={h} style={{fontSize:9.5,fontFamily:F.sans,fontWeight:700,color:C.inkLight,textTransform:'uppercase',letterSpacing:'0.7px'}}>{h}</div>
+                  <div key={h} style={{fontSize:10, fontFamily:F.sans, fontWeight:800, color:C.inkLight, textTransform:'uppercase', letterSpacing:'0.8px'}}>{h}</div>
                 ))}
               </div>
               {rows.map((row,i)=>(
-                <div key={i} style={{display:'grid',gridTemplateColumns:'1fr 60px 80px 70px 90px',padding:'9px 12px',gap:6,borderBottom:`1px solid ${C.border}`,background:i%2===0?'#fff':C.bgInput}}>
-                  <div style={{fontSize:12.5,fontFamily:F.sans,color:C.ink}}>{row.description}</div>
-                  <div style={{fontSize:11.5,fontFamily:F.mono,color:C.inkLight}}>{row.unit}</div>
-                  <div style={{fontSize:12,fontFamily:F.mono,color:C.inkMid}}>{row.qty}</div>
-                  <div style={{fontSize:12,fontFamily:F.mono,color:C.inkMid}}>{row.rate.toLocaleString('en-IN')}</div>
-                  <div style={{fontSize:12.5,fontFamily:F.mono,fontWeight:600,color:C.ink,textAlign:'right'}}>{row.amount.toLocaleString('en-IN')}</div>
+                <div key={i} style={{display:'grid', gridTemplateColumns:'1fr 60px 80px 70px 100px', padding:'12px 16px', gap:12, borderBottom:i===rows.length-1?'none':`1px solid ${C.border}`, background:i%2===0?'#fff':C.bgInput}}>
+                  <div style={{fontSize:13, fontFamily:F.sans, fontWeight: 500, color:C.ink}}>{row.description}</div>
+                  <div style={{fontSize:12, fontFamily:F.mono, color:C.inkLight}}>{row.unit}</div>
+                  <div style={{fontSize:12, fontFamily:F.mono, fontWeight: 600, color:C.inkMid}}>{row.qty}</div>
+                  <div style={{fontSize:12, fontFamily:F.mono, color:C.inkMid}}>{row.rate.toLocaleString('en-IN')}</div>
+                  <div style={{fontSize:13, fontFamily:F.mono, fontWeight:700, color:C.ink, textAlign:'right'}}>{row.amount.toLocaleString('en-IN')}</div>
                 </div>
               ))}
-              <div style={{display:'grid',gridTemplateColumns:'1fr 60px 80px 70px 90px',padding:'11px 12px',gap:6,background:C.navyLight,borderTop:`2px solid ${C.navy}20`}}>
-                <div style={{fontSize:13,fontFamily:F.sans,fontWeight:700,color:C.navy,gridColumn:'1/5'}}>Grand Total</div>
-                <div style={{fontSize:14,fontFamily:F.mono,fontWeight:800,color:C.navy,textAlign:'right'}}>₹{total.toLocaleString('en-IN')}</div>
+              <div style={{display:'grid', gridTemplateColumns:'1fr 120px', padding:'16px 20px', gap:12, background: 'linear-gradient(135deg, var(--navy-light), rgba(239, 246, 255, 0.8))', borderTop:`2px solid ${C.navy}15` }}>
+                <div style={{fontSize:14, fontFamily:F.sans, fontWeight:700, color:C.navy}}>Grand Total</div>
+                <div style={{fontSize:16, fontFamily:F.mono, fontWeight:800, color:C.navy, textAlign:'right'}}>₹{total.toLocaleString('en-IN')}</div>
               </div>
             </div>
           </Card>

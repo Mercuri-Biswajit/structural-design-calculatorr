@@ -217,23 +217,23 @@ function ModuleSummaryCard({ moduleId, snapshot }) {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 10,
-          padding: "11px 14px 10px",
+          gap: 12,
+          padding: "12px 16px",
           borderBottom: `1px solid ${C.border}`,
-          background: `${color}07`,
+          background: `linear-gradient(180deg, ${color}08, transparent)`,
         }}
       >
         <div
           style={{
-            width: 34,
-            height: 34,
-            borderRadius: 8,
-            background: `${color}18`,
-            border: `1px solid ${color}28`,
+            width: 36,
+            height: 36,
+            borderRadius: 10,
+            background: `${color}12`,
+            border: `1px solid ${color}20`,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: 14,
+            fontSize: 16,
             color,
             fontFamily: F.mono,
             flexShrink: 0,
@@ -244,20 +244,22 @@ function ModuleSummaryCard({ moduleId, snapshot }) {
         <div style={{ flex: 1 }}>
           <div
             style={{
-              fontSize: 12.5,
+              fontSize: 13,
               fontWeight: 700,
               color: C.ink,
               fontFamily: F.sans,
+              letterSpacing: '-0.2px'
             }}
           >
             {meta.label}
           </div>
           <div
             style={{
-              fontSize: 9.5,
+              fontSize: 10,
               color: C.inkLight,
               fontFamily: F.mono,
               marginTop: 1,
+              opacity: 0.8
             }}
           >
             Saved {timeAgo(snapshot.savedAt)}
@@ -266,17 +268,17 @@ function ModuleSummaryCard({ moduleId, snapshot }) {
         {overallPass !== null && (
           <span
             style={{
-              padding: "3px 9px",
-              borderRadius: 20,
+              padding: "4px 10px",
+              borderRadius: 8,
               background: overallPass ? C.greenLight : C.redLight,
               color: overallPass ? C.green : C.red,
-              fontSize: 9.5,
+              fontSize: 10,
               fontFamily: F.mono,
               fontWeight: 700,
-              border: `1px solid ${overallPass ? C.green + "28" : C.red + "28"}`,
+              border: `1px solid ${overallPass ? C.green + "20" : C.red + "20"}`,
             }}
           >
-            {overallPass ? "✓ PASS" : "✗ FAIL"}
+            {overallPass ? "PASS" : "FAIL"}
           </span>
         )}
       </div>

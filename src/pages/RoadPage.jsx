@@ -1,9 +1,27 @@
-import { useState, useEffect } from 'react'
-import { C, F } from '@styles/tokens'
-import { Card, TwoCol, StatGrid, StatBox, UtilBar, PassFail, TabBtn, Inp, SectionTitle, InfoBox, ResultRow, Divider } from '@components/ui'
-import { analyzeHorizontalCurve, analyzeVerticalCurve, analyzePavement } from '@engines/roadEngine'
-import { SavePanel, SaveToast } from '@components/SavePanel'
-import { useSaveToProject } from '../hooks/useSaveToProject'
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { C, F } from "@styles/tokens";
+import {
+  Card,
+  TwoCol,
+  StatGrid,
+  StatBox,
+  TabBtn,
+  Inp,
+  SectionTitle,
+  InfoBox,
+  ResultRow,
+  Divider,
+  PassFail,
+  UtilBar,
+} from "@components/ui";
+import {
+  analyzeHorizontalCurve,
+  analyzeVerticalCurve,
+  analyzePavement,
+} from "@engines/roadEngine";
+import { SavePanel, SaveToast } from "@components/SavePanel";
+import { useSaveToProject } from "../hooks/useSaveToProject";
 
 function RoadPlanSketch({ R, delta, V }) {
   const cx=140, cy=100, r=70
@@ -12,28 +30,61 @@ function RoadPlanSketch({ R, delta, V }) {
   const x1 = cx - r*Math.sin(half)*2.2, y1 = cy + r*Math.cos(half)*0.8
   const x2 = cx + r*Math.sin(half)*2.2, y2 = cy + r*Math.cos(half)*0.8
   const midX = cx, midY = cy - r*0.7
+  
   return (
-    <svg width={280} height={180} style={{display:'block',margin:'0 auto'}}>
-      <defs>
-        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill={C.purple}/>
-        </marker>
-      </defs>
-      {/* Tangents */}
-      <line x1={x1} y1={y1} x2={midX-8} y2={midY+8} stroke={C.inkLight} strokeWidth={14} strokeLinecap="round" opacity={0.25}/>
-      <line x1={x2} y1={y2} x2={midX+8} y2={midY+8} stroke={C.inkLight} strokeWidth={14} strokeLinecap="round" opacity={0.25}/>
-      {/* Curve */}
-      <path d={`M ${x1} ${y1} Q ${midX} ${midY-20} ${x2} ${y2}`}
-        stroke={C.purple} strokeWidth={14} strokeLinecap="round" fill="none" opacity={0.25}/>
-      <path d={`M ${x1} ${y1} Q ${midX} ${midY-20} ${x2} ${y2}`}
-        stroke={C.purple} strokeWidth={3} strokeLinecap="round" fill="none"/>
-      {/* Center radius */}
-      <line x1={midX} y1={cy+60} x2={midX} y2={midY-18} stroke={C.orange} strokeWidth={1} strokeDasharray="5,3"/>
-      <text x={midX+6} y={(cy+60+midY-18)/2} fill={C.orange} fontSize={9} fontFamily={F.mono}>R={R}m</text>
-      {/* Speed label */}
-      <text x={midX} y={16} textAnchor="middle" fill={C.purple} fontSize={11} fontFamily={F.mono} fontWeight="700">Δ = {delta}°</text>
-      <text x={midX} y={30} textAnchor="middle" fill={C.inkLight} fontSize={10} fontFamily={F.mono}>V = {V} km/h</text>
-    </svg>
+    <motion.svg width={280} height={180} style={{display:'block',margin:'0 auto', overflow: 'visible'}}>
+      {/* Background road surface */}
+      <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <line x1={x1} y1={y1} x2={midX-8} y2={midY+8} stroke="#1e293b" strokeWidth={18} strokeLinecap="round" opacity={0.8}/>
+        <line x1={x2} y1={y2} x2={midX+8} y2={midY+8} stroke="#1e293b" strokeWidth={18} strokeLinecap="round" opacity={0.8}/>
+        <path d={`M ${x1} ${y1} Q ${midX} ${midY-20} ${x2} ${y2}`} stroke="#1e293b" strokeWidth={18} strokeLinecap="round" fill="none" opacity={0.8}/>
+      </motion.g>
+
+      {/* Tracing Centerline Animation */}
+      <AnimatePresence>
+        <motion.path 
+          key={delta}
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+          d={`M ${x1} ${y1} Q ${midX} ${midY-20} ${x2} ${y2}`}
+          stroke={C.purple}
+          strokeWidth={3}
+          strokeLinecap="round"
+          fill="none"
+          filter="url(#glow)"
+        />
+      </AnimatePresence>
+
+      {/* Dashed Centerline (Tracing) */}
+      <motion.path 
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 1.5, ease: "easeInOut" }}
+        d={`M ${x1} ${y1} Q ${midX} ${midY-20} ${x2} ${y2}`}
+        stroke="#fff"
+        strokeWidth={1}
+        strokeDasharray="6,6"
+        fill="none"
+        opacity={0.6}
+      />
+      
+      {/* Radius Indicator */}
+      <motion.g layout>
+        <line x1={midX} y1={cy+50} x2={midX} y2={midY-14} stroke={C.orange} strokeWidth={1.5} strokeDasharray="5,4" opacity={0.6}/>
+        <motion.circle 
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          cx={midX} cy={cy+50} r={4} fill={C.orange} filter="url(#glow)"
+        />
+        <text x={midX+10} y={(cy+50+midY-14)/2} fill={C.orange} fontSize={10} fontWeight={800} fontFamily={F.mono}>R = {R}m</text>
+      </motion.g>
+      
+      {/* HUD Info */}
+      <motion.g initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transform="translate(140, 24)">
+        <text textAnchor="middle" fill={C.purple} fontSize={15} fontWeight={900} fontFamily={F.sans} letterSpacing="-0.5px">Δ = {delta}°</text>
+        <text y={16} textAnchor="middle" fill={C.inkLight} fontSize={10} fontWeight={700} fontFamily={F.mono} textTransform="uppercase" letterSpacing="1.5px">V = {V} km/h</text>
+      </motion.g>
+    </motion.svg>
   )
 }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { C, F, badge } from "@styles/tokens";
 import './BeamPage.css';
 import {
@@ -20,7 +21,7 @@ import { analyzeBeam, checkBeamSection } from "@engines/beamEngine";
 import { SavePanel, SaveToast } from "@components/SavePanel";
 import { useSaveToProject } from "../hooks/useSaveToProject";
 
-function BeamSchematic({ span, loads, support }) {
+function BeamSchematic({ span, loads, support, material }) {
   const W = 560,
     H = 90,
     lx = 40,
@@ -28,243 +29,163 @@ function BeamSchematic({ span, loads, support }) {
     pw = rx - lx,
     bY = 48;
   const toX = (v) => lx + (v / Math.max(span, 0.01)) * pw;
+  
+  const fill = material === 'concrete' ? 'url(#concrete)' : 'url(#steel)'
+  const stroke = material === 'concrete' ? C.borderMid : C.inkMid
+
   return (
-    <svg
+    <motion.svg
       width="100%"
       height={H}
       viewBox={`0 0 ${W} ${H}`}
-      style={{ fontFamily: F.mono }}
+      style={{ fontFamily: F.mono, overflow: 'visible' }}
     >
-      <rect
+      {/* Beam Body */}
+      <motion.rect
+        layout
         x={lx}
-        y={bY - 5}
+        y={bY - 6}
         width={pw}
-        height={10}
-        fill="#e0eafc"
-        stroke={C.primary}
+        height={12}
+        fill={fill}
+        stroke={stroke}
         strokeWidth={2}
-        rx={3}
+        rx={material === 'concrete' ? 2 : 0}
+        filter="url(#shadow)"
       />
-      {support === "simply" && (
-        <>
-          <polygon
-            points={`${lx},${bY + 5} ${lx - 12},${bY + 22} ${lx + 12},${bY + 22}`}
-            fill={C.blueLight}
-            stroke={C.blue}
-            strokeWidth={1.5}
-          />
-          <line
-            x1={lx - 15}
-            y1={bY + 24}
-            x2={lx + 15}
-            y2={bY + 24}
-            stroke={C.blue}
-            strokeWidth={2}
-          />
-          <polygon
-            points={`${rx},${bY + 5} ${rx - 12},${bY + 22} ${rx + 12},${bY + 22}`}
-            fill={C.blueLight}
-            stroke={C.blue}
-            strokeWidth={1.5}
-          />
-          <line
-            x1={rx - 15}
-            y1={bY + 24}
-            x2={rx + 15}
-            y2={bY + 24}
-            stroke={C.blue}
-            strokeWidth={2}
-          />
-        </>
-      )}
-      {support === "cantilever" && (
-        <rect
-          x={lx - 18}
-          y={bY - 16}
-          width={18}
-          height={32}
-          fill={C.blueLight}
-          stroke={C.blue}
-          strokeWidth={1.5}
-        />
-      )}
-      {support === "fixed" && (
-        <>
-          <rect
-            x={lx - 12}
-            y={bY - 14}
-            width={12}
-            height={28}
-            fill={C.blueLight}
-            stroke={C.blue}
-            strokeWidth={1.5}
-          />
-          <rect
-            x={rx}
-            y={bY - 14}
-            width={12}
-            height={28}
-            fill={C.blueLight}
-            stroke={C.blue}
-            strokeWidth={1.5}
-          />
-        </>
-      )}
-      {loads.map((l, i) => {
-        if (l.type === "udl") {
-          const x1 = toX(l.start),
-            x2 = toX(l.end);
-          const cnt = Math.max(3, Math.floor((x2 - x1) / 28));
-          return (
-            <g key={i}>
-              <line
-                x1={x1}
-                y1={14}
-                x2={x2}
-                y2={14}
-                stroke={C.orange}
-                strokeWidth={1.8}
-              />
-              {Array.from({ length: cnt + 1 }, (_, j) => {
-                const ax = x1 + (j / cnt) * (x2 - x1);
-                return (
-                  <g key={j}>
-                    <line
-                      x1={ax}
-                      y1={14}
-                      x2={ax}
-                      y2={34}
-                      stroke={C.orange}
-                      strokeWidth={1.3}
-                    />
-                    <polygon
-                      points={`${ax},34 ${ax - 3},25 ${ax + 3},25`}
-                      fill={C.orange}
-                    />
-                  </g>
-                );
-              })}
-              <text
-                x={(x1 + x2) / 2}
-                y={10}
-                textAnchor="middle"
-                fill={C.orange}
-                fontSize={9}
-              >
-                {l.w} kN/m
-              </text>
-            </g>
-          );
-        }
-        const ax = toX(l.pos);
-        return (
-          <g key={i}>
-            <line
-              x1={ax}
-              y1={6}
-              x2={ax}
-              y2={34}
-              stroke={C.blue}
-              strokeWidth={1.8}
+
+      {/* Supports */}
+      <AnimatePresence>
+        {support === "simply" && (
+          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <polygon
+              points={`${lx},${bY + 6} ${lx - 10},${bY + 22} ${lx + 10},${bY + 22}`}
+              fill={C.bgInput}
+              stroke={C.inkMid}
+              strokeWidth={1.5}
             />
             <polygon
-              points={`${ax},34 ${ax - 4},24 ${ax + 4},24`}
-              fill={C.blue}
+              points={`${rx},${bY + 6} ${rx - 10},${bY + 22} ${rx + 10},${bY + 22}`}
+              fill={C.bgInput}
+              stroke={C.inkMid}
+              strokeWidth={1.5}
             />
-            <text x={ax} y={5} textAnchor="middle" fill={C.blue} fontSize={9}>
-              {l.p}kN
-            </text>
-          </g>
-        );
-      })}
-      <line
-        x1={lx}
-        y1={H - 6}
-        x2={rx}
-        y2={H - 6}
-        stroke={C.inkLight}
-        strokeWidth={1}
-      />
-      <text
-        x={(lx + rx) / 2}
-        y={H - 1}
-        textAnchor="middle"
-        fill={C.inkMid}
-        fontSize={9}
-      >
-        L = {span} m
-      </text>
-    </svg>
+          </motion.g>
+        )}
+        {support === "cantilever" && (
+          <motion.rect
+            initial={{ height: 0 }} animate={{ height: 36 }}
+            x={lx - 16} y={bY - 18} width={16} height={36}
+            fill="url(#soil)" opacity={0.3} stroke={C.inkMid} strokeWidth={1.5} rx={2}
+          />
+        )}
+        {support === "fixed" && (
+          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <rect x={lx - 12} y={bY - 16} width={12} height={32} fill="url(#soil)" opacity={0.3} stroke={C.inkMid} strokeWidth={1.5} rx={2} />
+            <rect x={rx} y={bY - 16} width={12} height={32} fill="url(#soil)" opacity={0.3} stroke={C.inkMid} strokeWidth={1.5} rx={2} />
+          </motion.g>
+        )}
+      </AnimatePresence>
+
+      {/* Loads */}
+      <AnimatePresence>
+        {loads.map((l, i) => {
+          if (l.type === "udl") {
+            const x1 = toX(l.start), x2 = toX(l.end);
+            const cnt = Math.max(3, Math.floor((x2 - x1) / 32));
+            return (
+              <motion.g 
+                key={l.id || i}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scaleY: 0 }}
+              >
+                <line x1={x1} y1={12} x2={x2} y2={12} stroke={C.orange} strokeWidth={2.5} strokeLinecap="round" />
+                {Array.from({ length: cnt + 1 }, (_, j) => {
+                  const ax = x1 + (j / cnt) * (x2 - x1);
+                  return (
+                    <g key={j}>
+                      <line x1={ax} y1={12} x2={ax} y2={34} stroke={C.orange} strokeWidth={1.5} />
+                      <polygon points={`${ax},34 ${ax - 3.5},24 ${ax + 3.5},24`} fill={C.orange} />
+                    </g>
+                  );
+                })}
+                <text x={(x1 + x2) / 2} y={8} textAnchor="middle" fill={C.orange} fontSize={10} fontWeight={800}>{l.w} kN/m</text>
+              </motion.g>
+            );
+          }
+          const ax = toX(l.pos);
+          return (
+            <motion.g 
+              key={l.id || i}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+            >
+              <line x1={ax} y1={4} x2={ax} y2={34} stroke={C.purple} strokeWidth={3} strokeLinecap="round" />
+              <polygon points={`${ax},34 ${ax - 5},22 ${ax + 5},22`} fill={C.purple} />
+              <text x={ax} y={2} textAnchor="middle" fill={C.purple} fontSize={10} fontWeight={800}>{l.p}kN</text>
+            </motion.g>
+          );
+        })}
+      </AnimatePresence>
+
+      <line x1={lx} y1={H - 8} x2={rx} y2={H - 8} stroke={C.inkFaint} strokeWidth={1} />
+      <text x={(lx + rx) / 2} y={H - 2} textAnchor="middle" fill={C.inkLight} fontSize={10} fontWeight={700}>L = {span} m</text>
+    </motion.svg>
   );
 }
 
 function SectionPreview({ b, d, material }) {
   const scale = Math.min(60 / b, 80 / d, 0.3);
-  const sw = Math.min(b * scale, 60),
-    sh = Math.min(d * scale, 80);
-  const ox = (70 - sw) / 2,
-    oy = (85 - sh) / 2;
-  const fill = material === "concrete" ? "#e0eafc" : "#fde8d0";
-  const stroke = material === "concrete" ? C.primary : C.accent;
+  const sw = Math.min(b * scale, 60), sh = Math.min(d * scale, 80);
+  const ox = (70 - sw) / 2, oy = (85 - sh) / 2;
+  
+  const fill = material === "concrete" ? 'url(#concrete)' : 'url(#steel)'
+  const stroke = material === "concrete" ? C.borderMid : C.inkMid
+
   return (
-    <svg width={70} height={85} style={{ display: "block", margin: "0 auto" }}>
-      <rect
-        x={ox}
-        y={oy}
-        width={sw}
-        height={sh}
-        fill={fill}
-        stroke={stroke}
-        strokeWidth={1.5}
+    <motion.svg width={70} height={85} style={{ display: "block", margin: "0 auto", overflow: 'visible' }}>
+      <motion.rect
+        layout
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        x={ox} y={oy} width={sw} height={sh}
+        fill={fill} stroke={stroke} strokeWidth={2.5}
+        rx={material === 'concrete' ? 3 : 0}
+        filter="url(#shadow)"
       />
-      {material === "concrete" &&
-        [
-          [ox + 5, oy + 5],
-          [ox + sw - 5, oy + 5],
-          [ox + 5, oy + sh - 5],
-          [ox + sw - 5, oy + sh - 5],
-        ].map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r={3} fill={stroke} />
-        ))}
-      {material === "steel" && (
-        <>
-          <rect
-            x={ox}
-            y={oy}
-            width={sw}
-            height={sh * 0.12}
-            fill={stroke}
-            opacity={0.7}
-          />
-          <rect
-            x={ox}
-            y={oy + sh - sh * 0.12}
-            width={sw}
-            height={sh * 0.12}
-            fill={stroke}
-            opacity={0.7}
-          />
-          <rect
-            x={ox + sw / 2 - sw * 0.08}
-            y={oy + sh * 0.12}
-            width={sw * 0.16}
-            height={sh * 0.76}
-            fill={stroke}
-            opacity={0.4}
-          />
-        </>
-      )}
-      <text
-        x={35}
-        y={82}
-        textAnchor="middle"
-        fill={C.inkMid}
-        fontSize={8}
-        fontFamily={F.mono}
-      >
+      
+      <AnimatePresence>
+        {material === "concrete" && (
+          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            {[ [ox + 6, oy + 6], [ox + sw - 6, oy + 6], [ox + 6, oy + sh - 6], [ox + sw - 6, oy + sh - 6] ].map(([cx, cy], i) => (
+              <motion.circle 
+                key={i} 
+                initial={{ scale: 0 }} animate={{ scale: 1 }}
+                cx={cx} cy={cy} r={3} 
+                fill={C.ink} 
+                filter="url(#glow)"
+              />
+            ))}
+          </motion.g>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {material === "steel" && (
+          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <rect x={ox} y={oy} width={sw} height={sh * 0.15} fill={stroke} opacity={0.8} />
+            <rect x={ox} y={oy + sh - sh * 0.15} width={sw} height={sh * 0.15} fill={stroke} opacity={0.8} />
+            <rect x={ox + sw / 2 - sw * 0.1} y={oy + sh * 0.15} width={sw * 0.2} height={sh * 0.7} fill={stroke} opacity={0.5} />
+          </motion.g>
+        )}
+      </AnimatePresence>
+
+      <text x={35} y={82} textAnchor="middle" fill={C.inkMid} fontSize={9} fontWeight={800} fontFamily={F.mono}>
         {b}×{d}
       </text>
-    </svg>
+    </motion.svg>
   );
 }
 
@@ -637,7 +558,7 @@ export default function BeamPage({ onDataChange }) {
 
             <Card>
               <SectionTitle>Structural Schematic</SectionTitle>
-              <BeamSchematic span={span} loads={loads} support={support} />
+              <BeamSchematic span={span} loads={loads} support={support} material={material} />
             </Card>
 
             {result && (

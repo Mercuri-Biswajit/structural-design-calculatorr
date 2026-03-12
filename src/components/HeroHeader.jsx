@@ -10,22 +10,26 @@ export default function HeroHeader() {
 
   return (
     <div className="glass-card" style={{
-      borderRadius: 14,
-      padding: '16px 20px',
-      marginBottom: 16,
+      borderRadius: 12,
+      padding: '18px 24px',
+      marginBottom: 20,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: 16,
+      border: '1px solid rgba(255, 255, 255, 0.8)',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)',
+      background: 'rgba(255, 255, 255, 0.85)'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         {/* Icon */}
         <div style={{
-          width: 44, height: 44, borderRadius: 12,
-          background: `${route.color}12`,
-          border: `1.5px solid ${route.color}25`,
+          width: 48, height: 48, borderRadius: 12,
+          background: `linear-gradient(135deg, ${route.color}15, ${route.color}05)`,
+          border: `1px solid ${route.color}20`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 20, color: route.color, flexShrink: 0,
+          fontSize: 22, color: route.color, flexShrink: 0,
+          boxShadow: `0 4px 12px ${route.color}10`
         }}>
           {route.icon}
         </div>
@@ -33,15 +37,16 @@ export default function HeroHeader() {
         {/* Title + description */}
         <div>
           <h1 style={{
-            margin: 0, fontSize: 20, fontWeight: 800,
-            color: C.ink, letterSpacing: '-0.3px',
+            margin: 0, fontSize: 22, fontWeight: 700,
+            color: C.ink, letterSpacing: '-0.4px',
             fontFamily: F.sans, lineHeight: 1.2,
           }}>
             {route.fullLabel}
           </h1>
           <p style={{
-            margin: '2px 0 0', fontSize: 11.5,
-            color: C.inkLight, fontFamily: F.mono,
+            margin: '4px 0 0', fontSize: 12,
+            color: C.inkLight, fontFamily: F.sans,
+            fontWeight: 500
           }}>
             {route.description}
           </p>
@@ -50,14 +55,14 @@ export default function HeroHeader() {
 
       {/* Code badges */}
       {route.codes.length > 0 && (
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {route.codes.map(code => (
             <span key={code} style={{
-              padding: '3px 10px', borderRadius: 6,
-              background: `${route.color}10`,
-              border: `1px solid ${route.color}22`,
-              color: route.color,
-              fontSize: 10.5, fontFamily: F.mono, fontWeight: 700, letterSpacing: '0.5px',
+              padding: '4px 12px', borderRadius: 8,
+              background: `var(--bg-alt)`,
+              border: `1px solid var(--border)`,
+              color: 'var(--ink-mid)',
+              fontSize: 11, fontFamily: F.mono, fontWeight: 600, letterSpacing: '0.5px',
             }}>{code}</span>
           ))}
         </div>

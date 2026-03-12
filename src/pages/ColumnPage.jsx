@@ -1,57 +1,156 @@
-import { useState, useEffect } from 'react'
-import { C, F } from '@styles/tokens'
-import { Card, TwoCol, StatGrid, StatBox, UtilBar, PassFail, TabBtn, Inp, SectionTitle, InfoBox, ResultRow, Divider } from '@components/ui'
-import { analyzeColumn } from '@engines/structuralEngine'
-import { SavePanel, SaveToast } from '@components/SavePanel'
-import { useSaveToProject } from '../hooks/useSaveToProject'
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { C, F } from "@styles/tokens";
+import {
+  Card,
+  TwoCol,
+  StatGrid,
+  StatBox,
+  TabBtn,
+  Inp,
+  SectionTitle,
+  InfoBox,
+  ResultRow,
+  Divider,
+  PassFail,
+  UtilBar,
+} from "@components/ui";
+import { analyzeColumn } from "@engines/structuralEngine";
+import { SavePanel, SaveToast } from "@components/SavePanel";
+import { useSaveToProject } from "../hooks/useSaveToProject";
 
 function ColumnSketch({ b, d, material, P, Mx, My, Le }) {
+  const fill = material === 'concrete' ? 'url(#concrete)' : 'url(#steel)'
+  const stroke = material === 'concrete' ? C.borderMid : C.inkMid
+  
   return (
     <div style={{ display: 'flex', justifyContent: 'center', gap: 40 }}>
+      {/* Elevation View */}
       <div style={{ textAlign: 'center' }}>
-        <p style={{ fontSize: 10, color: C.inkLight, fontFamily: F.mono, marginBottom: 6, letterSpacing: '1px', textTransform: 'uppercase' }}>Elevation</p>
-        <svg width={140} height={230}>
-          <rect x={50} y={30} width={50} height={170} fill={material === 'concrete' ? '#e0eafc' : '#fde8d0'} stroke={C.blue} strokeWidth={2} rx={3} />
-          {material === 'concrete' && [[57,38],[93,38],[57,192],[93,192]].map(([cx,cy],i) =>
-            <circle key={i} cx={cx} cy={cy} r={5} fill={C.orange} />
-          )}
-          {material === 'steel' && <>
-            <rect x={50} y={30} width={50} height={12} fill={C.orange} opacity={0.7} />
-            <rect x={50} y={188} width={50} height={12} fill={C.orange} opacity={0.7} />
-            <rect x={71} y={42} width={8} height={146} fill={C.orange} opacity={0.4} />
-          </>}
-          <line x1={75} y1={5} x2={75} y2={28} stroke={C.red} strokeWidth={2.5} />
-          <polygon points="75,30 69,18 81,18" fill={C.red} />
-          <text x={82} y={20} fill={C.red} fontSize={9} fontFamily={F.mono}>{P} kN</text>
-          <path d="M 110 115 Q 128 105 120 95" stroke={C.orange} strokeWidth={2} fill="none" />
-          <polygon points="120,93 113,101 122,103" fill={C.orange} />
-          <text x={115} y={132} fill={C.orange} fontSize={8} fontFamily={F.mono}>Mx={Mx}</text>
-          <line x1={20} y1={30} x2={20} y2={200} stroke={C.inkFaint} strokeWidth={1} strokeDasharray="3,3" />
-          <text x={14} y={118} fill={C.inkLight} fontSize={8} fontFamily={F.mono} transform="rotate(-90,14,118)">Le = {Le} m</text>
-          <text x={75} y={222} textAnchor="middle" fill={C.inkMid} fontSize={9} fontFamily={F.mono}>{b}×{d} mm</text>
+        <p style={{ fontSize: 10, color: C.inkLight, fontFamily: F.mono, marginBottom: 8, letterSpacing: '1px', fontWeight: 700 }}>ELEVATION</p>
+        <svg width={140} height={230} style={{ overflow: 'visible' }}>
+          {/* Main Column Body */}
+          <motion.rect 
+            layout
+            initial={{ height: 0 }}
+            animate={{ height: 170 }}
+            x={50} y={30} width={50} height={170} 
+            fill={fill} stroke={stroke} strokeWidth={2} rx={material === 'concrete' ? 2 : 0} 
+            filter="url(#shadow)"
+          />
+          
+          {/* Rebar visualization for concrete */}
+          <AnimatePresence>
+            {material === 'concrete' && (
+              <motion.g 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+              >
+                {/* Vertical bars (simplified elevation) */}
+                <motion.line x1={57} y1={30} x2={57} y2={200} stroke={C.inkMid} strokeWidth={1.5} opacity={0.6} strokeDasharray="2,2" />
+                <motion.line x1={93} y1={30} x2={93} y2={200} stroke={C.inkMid} strokeWidth={1.5} opacity={0.6} strokeDasharray="2,2" />
+                {/* Ties/Stirrups */}
+                {[50, 80, 110, 140, 170].map(ty => (
+                  <motion.line key={ty} x1={50} y1={ty} x2={100} y2={ty} stroke={C.inkLight} strokeWidth={1} opacity={0.3} />
+                ))}
+              </motion.g>
+            )}
+          </AnimatePresence>
+
+          {/* Steel section details */}
+          <AnimatePresence>
+            {material === 'steel' && (
+              <motion.g 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+              >
+                <rect x={50} y={30} width={50} height={14} fill={stroke} opacity={0.8} />
+                <rect x={50} y={186} width={50} height={14} fill={stroke} opacity={0.8} />
+                <rect x={71} y={44} width={8} height={142} fill={stroke} opacity={0.4} />
+              </motion.g>
+            )}
+          </AnimatePresence>
+
+          {/* Load Vector */}
+          <motion.g animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
+            <line x1={75} y1={0} x2={75} y2={28} stroke={C.red} strokeWidth={3} strokeLinecap="round" />
+            <polygon points="75,30 69,18 81,18" fill={C.red} />
+            <text x={84} y={12} fill={C.red} fontSize={10} fontWeight={800} fontFamily={F.mono}>{P} kN</text>
+          </motion.g>
+          
+          {/* Moment Arrow (Elevation) */}
+          <motion.g animate={{ opacity: Mx > 0 ? 1 : 0 }}>
+            <path d="M 110 115 Q 130 105 120 95" stroke={C.orange} strokeWidth={2.5} fill="none" strokeLinecap="round" />
+            <polygon points="120,93 113,101 122,103" fill={C.orange} />
+            <text x={115} y={134} fill={C.orange} fontSize={9} fontWeight={800} fontFamily={F.mono}>Mx={Mx}</text>
+          </motion.g>
+          
+          {/* Dimension Label */}
+          <line x1={20} y1={30} x2={20} y2={200} stroke={C.inkFaint} strokeWidth={1} strokeDasharray="4,4" />
+          <text x={14} y={115} fill={C.inkMid} fontSize={9} fontWeight={600} fontFamily={F.mono} transform="rotate(-90,14,115)">Le = {Le} m</text>
+          
+          <text x={75} y={222} textAnchor="middle" fill={C.inkMid} fontSize={10} fontWeight={700} fontFamily={F.mono}>{b}×{d} mm</text>
         </svg>
       </div>
+
+      {/* Plan View */}
       <div style={{ textAlign: 'center' }}>
-        <p style={{ fontSize: 10, color: C.inkLight, fontFamily: F.mono, marginBottom: 6, letterSpacing: '1px', textTransform: 'uppercase' }}>Plan View</p>
-        <svg width={120} height={120}>
-          <rect x={10} y={10} width={100} height={100} fill={material === 'concrete' ? '#e0eafc' : '#fde8d0'} stroke={C.blue} strokeWidth={2} rx={3} />
-          {material === 'concrete' && [[18,18],[102,18],[18,102],[102,102]].map(([cx,cy],i) =>
-            <circle key={i} cx={cx} cy={cy} r={6} fill={C.orange} />
-          )}
-          <line x1={10} y1={60} x2={110} y2={60} stroke={C.inkFaint} strokeWidth={0.8} strokeDasharray="3,3" />
-          <line x1={60} y1={10} x2={60} y2={110} stroke={C.inkFaint} strokeWidth={0.8} strokeDasharray="3,3" />
-          <path d="M 110 60 Q 120 50 110 40" stroke={C.orange} strokeWidth={2} fill="none" />
-          <polygon points="110,38 103,46 115,47" fill={C.orange} />
-          <text x={118} y={52} fill={C.orange} fontSize={8} fontFamily={F.mono}>Mx</text>
-          <path d="M 60 10 Q 72 6 76 14" stroke={C.purple} strokeWidth={2} fill="none" />
-          <polygon points="76,15 66,12 70,20" fill={C.purple} />
-          <text x={76} y={10} fill={C.purple} fontSize={8} fontFamily={F.mono}>My={My}</text>
-          <text x={60} y={118} textAnchor="middle" fill={C.inkMid} fontSize={8} fontFamily={F.mono}>{b} mm</text>
+        <p style={{ fontSize: 10, color: C.inkLight, fontFamily: F.mono, marginBottom: 8, letterSpacing: '1px', fontWeight: 700 }}>PLAN VIEW</p>
+        <svg width={120} height={130} style={{ overflow: 'visible' }}>
+          <motion.rect 
+            layout
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            x={10} y={10} width={100} height={100} 
+            fill={fill} stroke={stroke} strokeWidth={2.5} rx={material === 'concrete' ? 4 : 0} 
+            filter="url(#shadow)"
+          />
+
+          {/* Concrete Reinforcing Bars (Plan) */}
+          <AnimatePresence>
+            {material === 'concrete' && (
+              <motion.g initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                {[[22,22],[98,22],[22,98],[98,98], [60,22], [60,98], [22,60], [98,60]].map(([cx,cy],i) =>
+                  <motion.circle 
+                    key={i} 
+                    layout
+                    cx={cx} cy={cy} r={4.5} 
+                    fill={C.ink} 
+                    filter="url(#glow)"
+                  />
+                )}
+                {/* Internal tie */}
+                <rect x={22} y={22} width={76} height={76} fill="none" stroke={C.inkMid} strokeWidth={1} opacity={0.4} />
+              </motion.g>
+            )}
+          </AnimatePresence>
+
+          {/* Center Lines */}
+          <line x1={0} y1={60} x2={120} y2={60} stroke={C.inkFaint} strokeWidth={1} strokeDasharray="5,5" />
+          <line x1={60} y1={0} x2={60} y2={120} stroke={C.inkFaint} strokeWidth={1} strokeDasharray="5,5" />
+          
+          {/* Moments (Plan) */}
+          <motion.g animate={{ opacity: Mx > 0 ? 1 : 0 }}>
+            <path d="M 115 60 Q 125 50 115 40" stroke={C.orange} strokeWidth={2.5} fill="none" />
+            <polygon points="115,38 108,46 120,47" fill={C.orange} />
+            <text x={122} y={54} fill={C.orange} fontSize={9} fontWeight={800} fontFamily={F.mono}>Mx</text>
+          </motion.g>
+          
+          <motion.g animate={{ opacity: My > 0 ? 1 : 0 }}>
+            <path d="M 60 5 Q 72 1 76 9" stroke={C.purple} strokeWidth={2.5} fill="none" />
+            <polygon points="76,10 66,7 70,15" fill={C.purple} />
+            <text x={78} y={6} fill={C.purple} fontSize={9} fontWeight={800} fontFamily={F.mono}>My</text>
+          </motion.g>
+          
+          <text x={60} y={124} textAnchor="middle" fill={C.inkMid} fontSize={10} fontWeight={700} fontFamily={F.mono}>{b} mm</text>
         </svg>
       </div>
     </div>
   )
 }
+
 
 export default function ColumnPage({ onDataChange }) {
   const [P, setP]               = useState(800)

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { C, F } from "@styles/tokens";
 import {
   Card,
@@ -17,101 +18,84 @@ import { calcBridgeLoads, IRC_VEHICLE_LOADS } from "@engines/roadEngine";
 // ═══════════════════════════════════════════════
 //  BRIDGE PAGE
 // ═══════════════════════════════════════════════
+
 function BridgeElevationSVG({ span, vehicleClass }) {
   return (
-    <svg width="100%" height={120} viewBox="0 0 580 120">
-      <rect
-        x={30}
-        y={46}
-        width={520}
-        height={12}
-        fill="#dde6f5"
+    <motion.svg width="100%" height={120} viewBox="0 0 580 120" style={{ overflow: 'visible' }}>
+      {/* Water beneath */}
+      <motion.rect
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        x={30} y={85} width={520} height={20}
+        fill="url(#soil)"
+        opacity={0.1}
+      />
+      
+      {/* Animated waves/water */}
+      <motion.path
+        d="M 30 85 Q 55 80, 80 85 T 130 85 T 180 85 T 230 85 T 280 85 T 330 85 T 380 85 T 430 85 T 480 85 T 530 85 T 550 85"
+        fill="none"
         stroke={C.blue}
-        strokeWidth={2}
-      />
-      {[110, 210, 310, 410, 500].map((gx) => (
-        <rect
-          key={gx}
-          x={gx - 8}
-          y={58}
-          width={16}
-          height={25}
-          fill="#c8d8f0"
-          stroke={C.blue}
-          strokeWidth={1}
-        />
-      ))}
-      <rect
-        x={14}
-        y={56}
-        width={20}
-        height={34}
-        fill={C.blueLight}
-        stroke={C.blue}
-        strokeWidth={2}
-      />
-      <rect
-        x={546}
-        y={56}
-        width={20}
-        height={34}
-        fill={C.blueLight}
-        stroke={C.blue}
-        strokeWidth={2}
-      />
-      <line x1={8} y1={92} x2={572} y2={92} stroke={C.inkMid} strokeWidth={2} />
-      {Array.from({ length: 12 }, (_, i) => (
-        <line
-          key={i}
-          x1={8 + i * 48}
-          y1={92}
-          x2={2 + i * 48}
-          y2={100}
-          stroke={C.inkMid}
-          strokeWidth={1}
-        />
-      ))}
-      <rect
-        x={200}
-        y={34}
-        width={70}
-        height={14}
-        fill={C.orangeLight}
-        stroke={C.orange}
-        strokeWidth={1.5}
-        rx={3}
-      />
-      <circle cx={215} cy={48} r={5} fill={C.orange} />
-      <circle cx={255} cy={48} r={5} fill={C.orange} />
-      <text
-        x={235}
-        y={29}
-        textAnchor="middle"
-        fill={C.orange}
-        fontSize={9}
-        fontFamily={F.mono}
-      >
-        IRC Class {vehicleClass}
-      </text>
-      <line
-        x1={30}
-        y1={108}
-        x2={550}
-        y2={108}
-        stroke={C.inkFaint}
         strokeWidth={1}
+        opacity={0.3}
+        animate={{ x: [0, -20, 0] }}
+        transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
       />
-      <text
-        x={290}
-        y={118}
-        textAnchor="middle"
-        fill={C.inkMid}
-        fontSize={9}
-        fontFamily={F.mono}
+
+      {/* Bridge Deck */}
+      <motion.rect
+        layout
+        x={30} y={46} width={520} height={14}
+        fill="url(#concrete)"
+        stroke={C.blue}
+        strokeWidth={2}
+        filter="url(#shadow)"
+      />
+
+      {/* Piers/Columns */}
+      <AnimatePresence>
+        {[110, 210, 310, 410, 500].map((gx, i) => (
+          <motion.rect
+            key={gx}
+            initial={{ height: 0 }}
+            animate={{ height: 32 }}
+            x={gx - 10} y={60} width={20} height={32}
+            fill="url(#concrete)"
+            stroke={C.blue}
+            strokeWidth={1}
+            opacity={0.8}
+            filter="url(#shadow)"
+          />
+        ))}
+      </AnimatePresence>
+
+      {/* Abutments */}
+      <rect x={14} y={56} width={24} height={40} fill="url(#soil)" stroke={C.blue} strokeWidth={2} rx={2} />
+      <rect x={542} y={56} width={24} height={40} fill="url(#soil)" stroke={C.blue} strokeWidth={2} rx={2} />
+
+      {/* River Bed Line */}
+      <line x1={0} y1={96} x2={580} y2={96} stroke={C.inkMid} strokeWidth={1.5} opacity={0.4} />
+
+      {/* Moving Vehicle */}
+      <motion.g 
+        animate={{ x: [50, 460, 50] }} 
+        transition={{ repeat: Infinity, duration: 15, ease: "linear" }}
       >
-        Span = {span} m
-      </text>
-    </svg>
+        <rect x={0} y={32} width={70} height={14} fill="url(#steel)" stroke={C.orange} strokeWidth={1.5} rx={3} filter="url(#shadow)" />
+        <motion.circle animate={{ scale: [0.95, 1.05, 0.95] }} cx={15} cy={46} r={5} fill={C.orange} filter="url(#glow)" />
+        <motion.circle animate={{ scale: [0.95, 1.05, 0.95] }} cx={55} cy={46} r={5} fill={C.orange} filter="url(#glow)" />
+        <text x={35} y={28} textAnchor="middle" fill={C.orange} fontSize={9} fontWeight={800} fontFamily={F.mono}>
+          {vehicleClass}
+        </text>
+      </motion.g>
+
+      <motion.g layout>
+        <line x1={30} y1={108} x2={550} y2={108} stroke={C.inkFaint} strokeWidth={1} />
+        <text x={290} y={116} textAnchor="middle" fill={C.inkMid} fontSize={10} fontWeight={700} fontFamily={F.mono}>
+          Total Structure Length = {span} m
+        </text>
+      </motion.g>
+    </motion.svg>
   );
 }
 
@@ -121,64 +105,82 @@ function AxleLoadDiagramSVG({ axles }) {
   const spacing = W / (axles.length + 1);
   const maxA = Math.max(...axles);
   return (
-    <svg width="100%" height={110} viewBox="0 0 580 110">
+    <motion.svg width="100%" height={110} viewBox="0 0 580 110" style={{ overflow: 'visible' }}>
       <line
         x1={ox}
         y1={80}
         x2={ox + W}
         y2={80}
         stroke={C.blue}
-        strokeWidth={2}
+        strokeWidth={3}
+        strokeLinecap="round"
       />
-      {axles.map((a, i) => {
-        const x = ox + (i + 1) * spacing;
-        const h = (a / maxA) * 55;
-        return (
-          <g key={i}>
-            <line
-              x1={x}
-              y1={80 - h}
-              x2={x}
-              y2={80}
-              stroke={C.orange}
-              strokeWidth={2}
-            />
-            <polygon
-              points={`${x},80 ${x - 5},70 ${x + 5},70`}
-              fill={C.orange}
-            />
-            <circle
-              cx={x}
-              cy={80}
-              r={6}
-              fill={C.blueLight}
-              stroke={C.blue}
-              strokeWidth={1.5}
-            />
-            <text
-              x={x}
-              y={80 - h - 5}
-              textAnchor="middle"
-              fill={C.orange}
-              fontSize={8}
-              fontFamily={F.mono}
+      <AnimatePresence>
+        {axles.map((a, i) => {
+          const x = ox + (i + 1) * spacing;
+          const h = (a / maxA) * 55;
+          return (
+            <motion.g 
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
             >
-              {a}
-            </text>
-          </g>
-        );
-      })}
+              <motion.line
+                initial={{ height: 0 }}
+                animate={{ height: h }}
+                x1={x}
+                y1={80 - h}
+                x2={x}
+                y2={80}
+                stroke={C.orange}
+                strokeWidth={2.5}
+                strokeLinecap="round"
+              />
+              <polygon
+                points={`${x},80 ${x - 5},70 ${x + 5},70`}
+                fill={C.orange}
+              />
+              <motion.circle
+                whileHover={{ scale: 1.2 }}
+                cx={x}
+                cy={80}
+                r={7}
+                fill="url(#steel)"
+                stroke={C.blue}
+                strokeWidth={1.5}
+                filter="url(#shadow)"
+              />
+              <text
+                x={x}
+                y={80 - h - 8}
+                textAnchor="middle"
+                fill={C.orange}
+                fontSize={9}
+                fontWeight={800}
+                fontFamily={F.mono}
+                filter="url(#glow)"
+              >
+                {a}
+              </text>
+            </motion.g>
+          );
+        })}
+      </AnimatePresence>
       <text
         x={ox + W / 2}
-        y={100}
+        y={102}
         textAnchor="middle"
-        fill={C.inkMid}
-        fontSize={9}
+        fill={C.inkLight}
+        fontSize={10}
+        fontWeight={700}
         fontFamily={F.mono}
+        textTransform="uppercase"
+        letterSpacing="1px"
       >
-        Axle loads (kN) — spacing schematic, not to scale
+        Axle Spacing Schematic (IRC)
       </text>
-    </svg>
+    </motion.svg>
   );
 }
 
@@ -994,40 +996,59 @@ export function ReportPage({ allData }) {
     <div style={{ maxWidth: 780, margin: "0 auto" }}>
       <div
         style={{
-          background: C.ink,
-          borderRadius: 12,
-          padding: "28px 24px",
+          background: `linear-gradient(135deg, ${C.navy}, #1e293b)`,
+          borderRadius: 16,
+          padding: "40px 24px",
           textAlign: "center",
-          marginBottom: 16,
+          marginBottom: 24,
+          boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1)',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.1, background: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
         <div
           style={{
             fontFamily: F.sans,
-            fontSize: 32,
-            fontWeight: 800,
-            color: "#fff",
-            letterSpacing: "4px",
+            fontSize: 28,
+            fontWeight: 900,
+            color: "#f8fafc",
+            letterSpacing: "6px",
+            textTransform: 'uppercase',
+            position: 'relative'
           }}
         >
-          STRUCTURE DESIGN REPORT
+          Structure Design Report
         </div>
         <div
           style={{
-            fontSize: 13,
-            color: "#9ca3af",
-            marginTop: 4,
+            fontSize: 14,
+            color: "#94a3b8",
+            marginTop: 8,
             fontFamily: F.mono,
+            fontWeight: 500,
+            letterSpacing: '1.5px',
+            position: 'relative'
           }}
         >
-          Civil & Structural Engineering Design Suite
+          Engineering Excellence & Structural Integrity
         </div>
+        <div
+          style={{
+            height: '1px',
+            width: '60px',
+            background: 'rgba(255,255,255,0.2)',
+            margin: '16px auto',
+            position: 'relative'
+          }}
+        />
         <div
           style={{
             fontSize: 11,
-            color: "#6b7280",
-            marginTop: 6,
+            color: "#64748b",
             fontFamily: F.mono,
+            letterSpacing: '1px',
+            position: 'relative'
           }}
         >
           IS 456 · IS 800 · IS 2911 · IRC:6 · IRC:37 · IS 2950

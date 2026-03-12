@@ -11,29 +11,29 @@ function BridgeElevation({ span, vcClass }) {
   return (
     <svg width={280} height={160} style={{display:'block',margin:'0 auto'}}>
       {/* Water */}
-      <rect x={lx} y={bY+30} width={bW} height={35} fill="#e0f2fe" opacity={0.7}/>
+      <rect x={lx} y={bY+30} width={bW} height={35} fill={C.blueLight} opacity={0.4}/>
       {[0,1,2,3,4].map(i=>(
         <path key={i} d={`M ${lx+10+i*50} ${bY+40} Q ${lx+25+i*50} ${bY+35} ${lx+40+i*50} ${bY+40}`}
-          stroke="#7dd3fc" strokeWidth={1.5} fill="none"/>
+          stroke={C.blue} strokeWidth={1} opacity={0.3} fill="none"/>
       ))}
       {/* Deck */}
-      <rect x={lx} y={bY-10} width={bW} height={14} fill={C.blueLight} stroke={C.blue} strokeWidth={2} rx={2}/>
+      <rect x={lx} y={bY-10} width={bW} height={14} fill={C.bgInput} stroke={C.borderMid} strokeWidth={2} rx={3}/>
       {/* Abutments */}
-      <rect x={lx-12} y={bY-12} width={14} height={44} fill="#c7d5e8" stroke={C.blue} strokeWidth={1.5}/>
-      <rect x={rx-2}  y={bY-12} width={14} height={44} fill="#c7d5e8" stroke={C.blue} strokeWidth={1.5}/>
+      <rect x={lx-12} y={bY-12} width={14} height={44} fill={C.bgAlt} stroke={C.borderMid} strokeWidth={1.5} rx={2}/>
+      <rect x={rx-2}  y={bY-12} width={14} height={44} fill={C.bgAlt} stroke={C.borderMid} strokeWidth={1.5} rx={2}/>
       {/* Piers */}
       {piers.map(px=>(
-        <rect key={px} x={px-6} y={bY+4} width={12} height={50} fill="#c7d5e8" stroke={C.blue} strokeWidth={1.5} rx={3}/>
+        <rect key={px} x={px-6} y={bY+4} width={12} height={50} fill={C.bgAlt} stroke={C.borderMid} strokeWidth={1.5} rx={3}/>
       ))}
       {/* Class vehicle indicator */}
-      <rect x={lx+bW/2-22} y={bY-24} width={44} height={12} fill={C.orange} rx={3} opacity={0.9}/>
-      <text x={lx+bW/2} y={bY-15} textAnchor="middle" fill="#fff" fontSize={9} fontFamily={F.mono} fontWeight="700">
+      <rect x={lx+bW/2-24} y={bY-26} width={48} height={14} fill={C.orange} rx={4} opacity={0.9}/>
+      <text x={lx+bW/2} y={bY-16} textAnchor="middle" fill="#fff" fontSize={9} fontWeight={600} fontFamily={F.mono}>
         IRC Class {vcClass}
       </text>
       {/* Span label */}
-      <line x1={lx} y1={bY+52} x2={rx} y2={bY+52} stroke={C.inkFaint} strokeWidth={1}/>
-      <text x={(lx+rx)/2} y={bY+64} textAnchor="middle" fill={C.inkMid} fontSize={10} fontFamily={F.mono}>
-        Span = {span} m
+      <line x1={lx} y1={bY+54} x2={rx} y2={bY+54} stroke={C.inkFaint} strokeWidth={1}/>
+      <text x={(lx+rx)/2} y={H - 1} textAnchor="middle" fill={C.inkMid} fontSize={10} fontWeight={500} fontFamily={F.mono}>
+        L = {span} m
       </text>
     </svg>
   )

@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { DEFAULT_PATH } from "@routes/index";
 import Navbar from "@components/layout/header/Navbar";
 import HeroHeader from "@components/HeroHeader";
+import VisualDefinitions from "@components/layout/VisualDefinitions";
 
 import BeamPage from "@pages/BeamPage";
 import ColumnPage from "@pages/ColumnPage";
@@ -21,6 +22,7 @@ export default function App() {
 
   return (
     <>
+      <VisualDefinitions />
       {/* Sidebar */}
       <Navbar />
 
@@ -29,7 +31,8 @@ export default function App() {
         style={{
           marginLeft: 'var(--sidebar-width)',
           minHeight: '100vh',
-          transition: 'margin-left 0.25s ease',
+          width: 'calc(100% - var(--sidebar-width))',
+          transition: 'margin-left 0.25s ease, width 0.25s ease',
         }}
       >
         <main style={{ maxWidth: '100%', margin: '0 10px' }}>

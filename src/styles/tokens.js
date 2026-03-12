@@ -81,9 +81,9 @@ export const C = {
 
 // ── TYPOGRAPHY ─────────────────────────────────────────────────
 export const F = {
-  sans:    "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
-  mono:    "'DM Mono', 'Fira Code', monospace",
-  display: "'Plus Jakarta Sans', system-ui, sans-serif",
+  sans:    "'Outfit', 'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
+  mono:    "'JetBrains Mono', 'DM Mono', 'Fira Code', monospace",
+  display: "'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif",
 }
 
 // ── SPACING ────────────────────────────────────────────────────
